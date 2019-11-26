@@ -1,0 +1,131 @@
+%=======================02-713 LaTeX template, following the 15-210 template==================
+%
+% You don't need to use LaTeX or this template, but you must turn your homework in as
+% a typeset PDF somehow.
+%
+% How to use:
+%    1. Update your information in section "A" below
+%    2. Write your answers in section "B" below. Precede answers for all 
+%       parts of a question with the command "\question{n}{desc}" where n is
+%       the question number and "desc" is a short, one-line description of 
+%       the problem. There is no need to restate the problem.
+%    3. If a question has multiple parts, precede the answer to part x with the
+%       command "\part{x}".
+%    4. If a problem asks you to design an algorithm, use the commands
+%       \algorithm, \correctness, \runtime to precede your discussion of the 
+%       description of the algorithm, its correctness, and its running time, respectively.
+%    5. You can include graphics by using the command \includegraphics{FILENAME}
+%
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlength{\headheight}{13.6pt}
+\newcommand\question[2]{\vspace{.25in}\hrule\textbf{#1: #2}\vspace{.5em}\hrule\vspace{.10in}}
+\renewcommand\part[1]{\vspace{.10in}\textbf{(#1)}\par}
+\newcommand\algorithm{\vspace{.10in}\textbf{Algorithm: }}
+\newcommand\correctness{\vspace{.10in}\textbf{Correctness: }}
+\newcommand\runtime{\vspace{.10in}\textbf{Running time: }}
+\pagestyle{fancyplain}
+\lhead{\textbf{\NAME}}
+\chead{\textbf{{\COURSE} Problem Set\HWNUM}}
+\rhead{\today}
+\begin{document}\raggedright
+%Section A==============Change the values below to match your information==================
+\newcommand\NAME{Eric Altenburg}  % your name
+\newcommand\COURSE{CS-334}
+\newcommand\HWNUM{8}              % the homework number
+%Section B==============Put your answers to the questions below here=======================
+
+% no need to restate the problem --- the graders know which problem is which,
+% but replacing "The First Problem" with a short phrase will help you remember
+% which problem this is when you read over your homeworks to study.
+
+\textit{Pledge: I pledge my honor that I have abided by the Stevens Honor System.} -Eric Altenburg
+
+\question{1}{(a) Let NONEMPTY = \{$<$M$>$: Turing Machine M accepts some string\}. Show that NONEMPTY is Turing-recognizable. Give a high-level description for your solution. (b) Is NONEMPTY decidable? Prove your answer. If you like, invoke a result discussed in class.}
+	\part{a}
+%		We construct a TM D that recognizes the language \textit{NONEMPTY}, using an enumerator $\epsilon$ that prints out all possible strings:\par
+%		"On input $<$M$>$: \par
+%		\begin{enumerate}
+%			\item For every string $\epsilon$ prints out:
+%				\subitem Run TM M on that string
+%				\subitem If M accepts, then D ACCEPTS"
+%		\end{enumerate}\par
+%		By only running M on the string $\epsilon$ prints out, the TM D can run infinitely as $\epsilon$ will print out an infinite amount of strings for M to run, however, if at least one of these strings is accepted, then we know that M's language is not empty, thus proving that \textit{NONEMPTY} is Turing-recognizable.\par
+		We construct a TM R that recognizes the language \textit{NONEMPTY}. Let w$_{1}$, w$_{2}$, ... , w$_{n}$ be a list of strings from $\Sigma$* that M will take as input. \par
+		"On input $<$M$>$:\par
+		\begin{enumerate}
+			\item In the following stages, repeat for $i=1,2,3, ...$
+			\item \quad Run M for i steps on each input string from w$_{1}$, w$_{2}$, ... , w$_{n}$
+			\item \quad If any of the strings are accepted by M, let R ACCEPT."
+		\end{enumerate}\par
+		For the language \textit{NONEMPTY}, we need M to see if any of the strings in w$_{1}$, w$_{2}$, ... , w$_{n}$ are accepted, however, there is a slight problem with this; the machine can loop on the first string and not evaluate any of the following strings when evaluated sequentially. By following the TM R above, it avoids this problem by looking at all strings and evaluating each one for i amount of steps, where i increases as R continues to run. Once M accepts at least one input string w$_{i}$, that means the language of M is not empty, hence R would accept. M can also reject a string saying that its language is still empty, and if that is the case, then M will continue to evaluate all input strings in w$_{1}$, w$_{2}$, ... , w$_{n}$.\par
+			
+	\part{b}
+		To prove that NONEMPTY is undecidable, we will show that A$_{TM} \le$ NONEMPTY.\par
+		Assume that NONEMPTY is decidable and let a TM R decide it.\par
+		Use R to construct another TM S that decides A$_{TM}$.\par
+		\quad S: On input $<M, w>$\par
+			\begin{enumerate}
+				\item Construct TM M$_{1}$
+					\subitem M$_{1}$: On input x
+						\subsubitem if x $\ne$ w REJECT
+						\subsubitem else run M(w)
+						\subsubitem \quad if it accepts, then ACCEPT
+				\item Run R($M_{1}$)
+					\subitem If it accepts, then ACCEPT
+					\subitem If it rejects, then REJECT
+			\end{enumerate}\par
+		From this, S is proven to be decidable utilizing R which was assumed to also be decidable, however, this should not be possible as A$_{TM}$ is proven to not be decidable, therefore, we have a contradiction. R cannot be decidable.\par
+		
+\question{2}{Define L$_{17}$ = \{$<$M$>|$ TM M accepts at least 17 different input strings\}. (a) Is L$_{17}$ TM-Recognizable? Prove your answer. (b) is L$_{17}$ TM-decidable? Prove your answer.}
+
+	\part{a}
+		To prove that L$_{17}$ is TM-recognizable, have TM D that recognizes the language, and using an enumerator $\epsilon$ that prints out all possible strings:\par
+		"On input w:\par
+		\begin{enumerate}
+			\item For every string $\epsilon$ prints out:
+				\subitem Run TM M on that string
+				\subitem If M accepts, then place a marker on the tape of D to signify a string has been accepted
+				\subitem If M rejects, then go back to stage 1
+			\item If at any point, the amount of marks on the input tape is at least 17, then ACCEPT, else, M will continually run on all the strings from $\epsilon$ looping."
+		\end{enumerate}\par
+		This proves that L$_{17}$ is TM-recognizable because it keeps track of all the strings that it accepts using the input that, and if at any point the total amount of accepted strings becomes 17 or greater, then we accept. 
+	
+	\part{b}
+		To prove that L$_{17}$ is undecidable, we will show that A$_{TM} \le$ L$_{17}$.\par
+		Assume that L$_{17}$ is decidable and let a TM R decide it.\par
+		Use R to construct another TM S that decides A$_{TM}$.\par
+		\quad S: On input $<M, w>$\par
+			\begin{enumerate}
+				\item Construct TM M$_{1}$
+					\subitem M$_{1}$: On input x
+						\subsubitem Run M(w)
+						\subsubitem If it accepts, then ACCEPT
+						\subsubitem \quad Else, if it rejects, REJECT.
+				\item Run R($M_{1}$)
+					\subitem If it accepts, then ACCEPT
+					\subitem If it rejects, then REJECT
+			\end{enumerate}\par
+		From this, S is proven to be decidable yet again thanks to the assumption that R is decidable, but S is not allowed to be decidable, therefore, there is a contradiction and R cannot be decidable.\par
+		
+\question{3}{What is the result of running Ben’s program? What was the mistake in Ben’s reasoning (other than thinking that the recursion theorem is false)?}
+	The output of Ben's program would be a whole lot of nothing besides just continually constructing its own description. This is due to the way he constructed the program, in stage 2 he says "run B(x)," however, in doing so it will forever compute its own description from the call on itself, thus, never getting to the part of the program where it will accept or reject.\par
+	Ben is wrong when he says, “A program like this that contradicts itself cannot exist" because the program never actually contradicts itself. It will forever compute its own description since it runs itself in stage 2, therefore, it will never be able to reach the point in which it accepts or rejects.\par
+	
+\question{4}{}
+	\part{a}
+		If D accepts $<$X$>$ then \underline{run N on input w}\par
+		
+	\part{b}
+		If D rejects $<$X$>$ then \underline{run M on input w}\par
+	
+	\part{3}
+		Since, in both cases X contradicts D, we conclude that \underline{L is undecidable}\par
+	
+
+\end{document}

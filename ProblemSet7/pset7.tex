@@ -1,0 +1,217 @@
+%=======================02-713 LaTeX template, following the 15-210 template==================
+%
+% You don't need to use LaTeX or this template, but you must turn your homework in as
+% a typeset PDF somehow.
+%
+% How to use:
+%    1. Update your information in section "A" below
+%    2. Write your answers in section "B" below. Precede answers for all 
+%       parts of a question with the command "\question{n}{desc}" where n is
+%       the question number and "desc" is a short, one-line description of 
+%       the problem. There is no need to restate the problem.
+%    3. If a question has multiple parts, precede the answer to part x with the
+%       command "\part{x}".
+%    4. If a problem asks you to design an algorithm, use the commands
+%       \algorithm, \correctness, \runtime to precede your discussion of the 
+%       description of the algorithm, its correctness, and its running time, respectively.
+%    5. You can include graphics by using the command \includegraphics{FILENAME}
+%
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlength{\headheight}{13.6pt}
+\newcommand\question[2]{\vspace{.25in}\hrule\textbf{#1: #2}\vspace{.5em}\hrule\vspace{.10in}}
+\renewcommand\part[1]{\vspace{.10in}\textbf{(#1)}\par}
+\newcommand\algorithm{\vspace{.10in}\textbf{Algorithm: }}
+\newcommand\correctness{\vspace{.10in}\textbf{Correctness: }}
+\newcommand\runtime{\vspace{.10in}\textbf{Running time: }}
+\pagestyle{fancyplain}
+\lhead{\textbf{\NAME}}
+\chead{\textbf{{\COURSE} Problem Set \HWNUM}}
+\rhead{\today}
+\begin{document}\raggedright
+%Section A==============Change the values below to match your information==================
+\newcommand\NAME{Eric Altenburg}  % your name
+\newcommand\COURSE{CS-334}
+\newcommand\HWNUM{7}              % the homework number
+%Section B==============Put your answers to the questions below here=======================
+
+% no need to restate the problem --- the graders know which problem is which,
+% but replacing "The First Problem" with a short phrase will help you remember
+% which problem this is when you read over your homeworks to study.
+
+\textit{Pledge: I pledge my honor that I have abided by the Stevens Honor System.} -Eric Altenburg
+
+\question{1}{Show that the class of TM-decidable languages is closed under the following operations:  union, concatenation, star, intersection, and complement.}
+	\part{Union}
+		We can construct TM's M$_{1}$ and M$_{2}$ to decide on languages L$_{1}$ and L$_{2}$ respectively. Then we make a new TM M' that will then decide the union of L$_{1}$ and L$_{2}$.\par
+		"On input w:
+		\begin{enumerate}
+			\item Run M$_{1}$ on input w, and if it accepts, then M' ACCEPT.
+			\item Run M$_{2}$ on input w, and if it accepts, then M' ACCEPT. Otherwise, M' REJECT."
+		\end{enumerate}
+		With this procedure, M' will accept the union of L$_{1}$ and L$_{2}$ if M$_{1}$ or M$_{2}$ accepts, else, if none of them accept, then M' will reject. Also, it can be said that if only one of the TM's accept, then M' will accept, therefore, either M$_{1}$ or M$_{2}$ must accept.
+	
+	\part{Concatenation}	
+		We can construct TM's M$_{1}$ and M$_{2}$ to decide on languages L$_{1}$ and L$_{2}$ respectively. Then a new 3-tape TM M' is made that will decide the concatenation of L$_{1}$ and L$_{2}$.\par
+		"On input w:
+		\begin{enumerate}
+			\item First, nondeterministically split the string as to allow multiple different variations run on M' as the string can be split in many ways. For now, call the split string w = w$_{1}$w$_{2}$, then copy w$_{1}$ onto the second tape of M' and w$_{2}$ onto the third tape of M'.
+			\item On the second tape where w$_{1}$ is, run M$_{1}$ on it. If it accepts, then proceed to stage 3. Otherwise, M' REJECT.
+			\item On the third tape where w$_{2}$ is, run M$_{2}$ on it. If it accepts, then ACCEPT. Otherwise, M' REJECT."
+		\end{enumerate}
+		M' is a nondeterministic decider due to the fact that both M$_{1}$ and M$_{2}$ are deciders and the L(M) is the concatenation of L$_{1}$ and L$_{2}$. Since you can simulate a 3-tape TM on a single tape deterministic decider, the concatenation is a closed operation.
+	
+		
+	\part{Star}
+		Construct a TM M$_{1}$ that decides on the language L$_{1}$. Using a 2-tape TM M':\par
+		"On the input w:
+		\begin{enumerate}
+			\item Nondeterministically select the leftmost unread part of the input string and place it onto the the second tape.
+			\item Run M$_{1}$ on the second tape's current string. If it accepts, and the entirety of w has been processed, then M' ACCEPT. If not all of w has been processed and M$_{1}$ accepts, clear the second tape and go to stage 1. If M$_{1}$ rejects, M' REJECT."
+		\end{enumerate}
+		M' is a  nondeterministic decider due to M$_{1}$ also being a decider, and the language of M' is the start operator on L$_{1}$. Since any 2-tape TM can be simulated with a single tape TM, M' shows that it is a decider for the star operation therefore making it closed.
+		
+	
+	\part{Intersection}
+		Similar to union, we construct two TM's M$_{1}$ and M$_{2}$ to decide on languages L$_{1}$ and L$_{2}$ respectively. Then we make a new TM M' that will then decide the intersection of L$_{1}$ and L$_{2}$.\par
+		"On input w:
+		\begin{enumerate}
+			\item Run M$_{1}$ on input w, and if it accepts, then move onto stage 2. Otherwise, M' REJECT.
+			\item Run M$_{2}$ on input w, and if it accepts, then M' ACCEPT. Otherwise, M' REJECT."
+		\end{enumerate}
+		For this, both TM's M$_{1}$ and M$_{2}$ must decide on the intersection of L$_{1}$ and L$_{2}$, therefore, M' will only accept it both of the TM's accept, and if only one or none accept, then M' rejects. 
+	
+	\part{Complement}
+		Have a TM M$_{1}$ that decides on the language L$_{1}$. Now, have another TM M' that decides on $\overline{L_{1}}$:\par
+		"On input w:
+		\begin{enumerate}
+			\item Run M$_{1}$ on the input w, if it accepts, M' REJECT. Otherwise, if it rejects, M' ACCEPT.
+		\end{enumerate}
+		
+		This proves that the complement is closed under decidable languages because the complement is everything that is not in the language, therefore, so long as the TM that decides on L$_{1}$ is accepted, M' will reject, and if it rejects, M' will accept.
+
+\question{2}{Show that the class of TM-recognizable languages is closed under the following operations:  union, concatenation, star, and intersection.  Is it closed under complement?}
+
+	\part{Union}
+		For two Turing-recognizable languages L$_{1}$ and L$_{2}$, let the TM's M$_{1}$ and M$_{2}$ recognize these languages respectively. We construct a TM M' that recognizes the union of L$_{1}$ and L$_{2}$.\par
+		"On input w:
+		\begin{enumerate}
+			\item Alternatively run M$_{1}$ M$_{2}$ on w step by step. Then, if either of M$_{1}$ or M$_{2}$ accept, M' will ACCEPT. If both of them halt and reject, then M' REJECT."
+		\end{enumerate}
+		If either M$_{1}$ or M$_{2}$ accepts w, then M' will accept w because it will arrive to its accept state in a finite amount of steps. If both M$_{1}$ or M$_{2}$ rejects and either of them do so by means of looping, then M' will loop. 
+		
+	\part{Concatenation}
+		We construct two TM's M$_{1}$ and M$_{2}$ to recognize languages L$_{1}$ and L$_{2}$ respectively. Construct a nondeterministic TM M' that will recognize the concat. of L$_{1}$ and L$_{2}$.\par
+		"On input w:
+		\begin{enumerate}
+			\item Split the input w into w = w$_{1}$w$_{2}$.
+			\item Run M$_{1}$ on w$_{1}$, and if it halts and rejects, then M' will REJECT.
+			\item Run M$_{2}$ on w$_{2}$, and if this accepts, then M' will ACCEPT. Otherwise, if it halts and rejects, then M' will REJECT."
+		\end{enumerate}
+		
+		This is very similar to proving it is decidable, however, now the condition of whether or not the TM halts must be taken into consideration.
+		
+	\part{Star}
+		For a Turing-recognizable language L, we can construct a nondeterministic TM M' that will recognize L*. \par
+		"On input w:
+		\begin{enumerate}
+			\item Nondeterministically cut w into into several substrings w$_{1}$w$_{2}$...w$_{n}$.
+			\item Then run M' on every substring w$_{i}$ for every single i. 
+			\item If M' accepts all substrings, then ACCEPT. Otherwise, if for any substring M' halts or rejects, then REJECT."
+		\end{enumerate}
+		Similar to the decidable proof above, so long as w can be broken into substrings that are still in the language, then M' has a path that allows it to accept in a finite number of steps.
+		
+	\part{Intersection}
+		For two Turing-recognizable languages L$_{1}$ and L$_{2}$, let the TM's M$_{1}$ and M$_{2}$ recognize these languages respectively. Create another TM M' that recognizes that intersection of L$_{1}$ and L$_{2}$. 
+		"On input w:
+		\begin{enumerate}
+			\item Run M$_{1}$ on w. If it halts or rejects, then M' will REJECT. If it accepts, then proceed to stage 2.
+			\item Run M$_{2}$ on w. If it halts or rejects, then M' will REJECT. If it accepts, then M' will ACCEPT."
+		\end{enumerate}
+		
+		This is similar to the union proof found above, however, both the TM's M$_{1}$ and M$_{2}$ must accept, therefore, it shows that w belongs to the intersection of the two languages.
+		
+	\part{Complement}
+		This can be accomplished by a proof by contradiction. Suppose there is a language L that is Turing-recognizable by TM M$_{1}$, and its complement, $\overline{L}$, is Turing-recognizable by TM M$_{2}$. We can show that the language L is actually decidable by running M$_{1}$ and M$_{2}$ in parallel. For some input w, we will run M$_{1}$ and M$_{2}$ on each input by alternating back and forth for each step, and when either one of them accepts, the outcome will be returned. Whether or not w is or is not a member of the language, the process will result in a halt.\par
+		"On input w:
+		\begin{enumerate}
+			\item For the case where the input w is in the language L, then M$_{1}$ accepts after k-amount of steps, and the overall process will halt after 2k steps for some value k.
+			\item For the case where the input w is not in the language, then it can be said that it belongs to the complement of it $\overline{L}$, and if this is the case, it will play out to a similar fashion as stage 1. $M_{2}$ will accept after k-amount of steps, and the overall process will halt after 2k steps for some value k.
+		\end{enumerate}
+		This is a contradiction as this shows that the language is actually decidable, as opposed to the previous assumption of it being Turing-recognizable.
+		
+\question{3}{Show that a language is decidable if and only if there is an enumerator which prints out strings in the language in standard string order (lexicographic, in order of increasing length).}
+	\part{-}
+	Take a decidable language L and a TM M. Also, have the lexicographic ordering of the strings in $\Sigma$* be represented by a series of variables such as s$_{1}$s$_{2}$...s$_{n}$. From this, the enumerator E will:\par
+	"Ignore the input
+	\begin{enumerate}
+		\item For all i, run M on s$_{i}$. 
+		\item If M accepts at any point, print out the string s$_{i}$, however, if M rejects it, move on."
+	\end{enumerate}
+	Any concern of this looping is immediately taken care of as the language L is deemed as decidable. Also, this is clear that the enumerator E will print out all strings in L in lexicographic order.\par
+	
+	\part{-}
+	Once again, consider a language L that is enumerated in lexicographic order by an enumerator E. We now suppose L to be infinite as if it were finite, then it would be clear that it would be decidable. The TM M that decides L will:\par
+	"On input w
+	\begin{enumerate}
+		\item Wait for E to print out a string s.
+		\item M will ACCEPT if the string s is the same as the input w.
+		\item M will REJECT if the string s is greater than the input w.
+		\item If the string s is less than the input w, then go to stage 1."
+	\end{enumerate}
+	This will halt at some point as E will never run out of strings, and there are only a finite amount of strings that are $\leq$ w.
+	
+\question{4}{Show that every infinite TM-recognizable language has an infinite decidable subset.}
+	Have the language L be Turing-recognizable with an enumerator E that enumerates all strings in L with the possibility of repetition. We then construct another enumerator E' that will output a subset of L in lexicographic order:\par
+	"Ignore the input
+	\begin{enumerate}
+		\item Simulate E and whenever E prints out the first string s$_{1}$, have E' print s$_{1}$ as well and let the previous string be s$_{1}$.
+		\item Continue simulating E.
+		\item If E prints another string s$_{new}$, check to see if it is longer than the previous string to make sure that the lexicographic order still holds. If it is, then print the string s$_{new}$ and set the previous string to be s$_{new}$. 
+		\item Continue to stage 2."
+	\end{enumerate}	
+	To help prove this, we use information from problem 3. The E' mentioned here will exclusively print strings in L making its language a subset of L. Now, since L is infinite there will always be strings in the language L that are longer than the previous string allowing E and E' to print the string while also updating their previous strings. This means that E' is infinite as well and since it prints in lexicographic order, the language is decidable as proved in the previous problem. Therefore, one can say that the E' 's language is an infinite decidable subset of L thus proving the problem.
+	
+\question{Optional Problem 1} {Prove that the language $A\backslash B=\{w:wx \in A, x\in B\}$, where A is a CFL and B is regular is a CFL.}
+	Couldn't figure this one out in time
+	
+\question{Optional Problem 2}{Show that a language can be recognized by a deterministic queue automaton iff the language is Turing-recognizable.}
+	You must prove in two directions:\par
+	\part{One Direction [not like the band]}
+		Given the queue automata, we can simulate a TM M:\par
+		Write a "\$" to the queue to indicate the left hand side of M's tape.Consider the head of M to always point to the right hand side (RHS) of the queue. Now say there is a symbol X on the right hand end of the queue, and from this two things can be done:
+		\begin{enumerate}
+			\item X $\rightarrow$ Y, L\par
+				Pull X out of the queue and push Y onto the queue. This will shift all the symbols in the queue to the right one bit.
+			\item X $\rightarrow$ Y, R\par
+				Write a mark on the left end of the queue in order to make that symbol unique. Then pull X and push Y into the queue. Pull out the right hand end element and push that into the queue. Repeat this until the unique symbol marked before reaches the right end of the queue, then remove the mark. 
+		\end{enumerate}
+		From these procedures, a TM M was simulated by using the operations of a queue automata.
+		
+	\part{Other Direction}
+		Given a TM M, we can simulate a queue automata:\par
+		To simulate the queue on the input tape of M, write a "\$" on the left hand end of the tape to identify the left hand end. Two queue automata operations are push and pull:
+		\begin{enumerate}
+			\item Push\par
+				To Push a new element on the left hand end of the tape, move all the symbols except for the "\$" over to the right by one spot and make the head of the tape point to the new empty space to the right of the "\$" and place the symbol to be pushed there.
+			\item Pull\par
+				Mark the elements that need to be pulled out of the queue on the input tape this way we can ignore them.
+		\end{enumerate}
+		With this, a queue automata was simulated with a TM M. \par\par
+		
+		Due to the proofs in both directions, we can say that a language can be recognized by a deterministic queue automaton iff the language is Turing-recognizable.
+
+
+
+
+
+
+
+
+	
+\end{document}

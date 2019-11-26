@@ -1,0 +1,96 @@
+%=======================02-713 LaTeX template, following the 15-210 template==================
+%
+% You don't need to use LaTeX or this template, but you must turn your homework in as
+% a typeset PDF somehow.
+%
+% How to use:
+%    1. Update your information in section "A" below
+%    2. Write your answers in section "B" below. Precede answers for all 
+%       parts of a question with the command "\question{n}{desc}" where n is
+%       the question number and "desc" is a short, one-line description of 
+%       the problem. There is no need to restate the problem.
+%    3. If a question has multiple parts, precede the answer to part x with the
+%       command "\part{x}".
+%    4. If a problem asks you to design an algorithm, use the commands
+%       \algorithm, \correctness, \runtime to precede your discussion of the 
+%       description of the algorithm, its correctness, and its running time, respectively.
+%    5. You can include graphics by using the command \includegraphics{FILENAME}
+%
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlength{\headheight}{13.6pt}
+\newcommand\question[2]{\vspace{.25in}\hrule\textbf{#1: #2}\vspace{.5em}\hrule\vspace{.10in}}
+\renewcommand\part[1]{\vspace{.10in}\textbf{(#1)}\par}
+\newcommand\algorithm{\vspace{.10in}\textbf{Algorithm: }}
+\newcommand\correctness{\vspace{.10in}\textbf{Correctness: }}
+\newcommand\runtime{\vspace{.10in}\textbf{Running time: }}
+\pagestyle{fancyplain}
+\lhead{\textbf{\NAME}}
+\chead{\textbf{{\COURSE} Problem Set\HWNUM}}
+\rhead{\today}
+\begin{document}\raggedright
+%Section A==============Change the values below to match your information==================
+\newcommand\NAME{Eric Altenburg}  % your name
+\newcommand\COURSE{CS-334}
+\newcommand\HWNUM{9}              % the homework number
+\newcommand{\bigO}{\mathcal{O}}
+%Section B==============Put your answers to the questions below here=======================
+
+% no need to restate the problem --- the graders know which problem is which,
+% but replacing "The First Problem" with a short phrase will help you remember
+% which problem this is when you read over your homeworks to study.
+
+\begin{center}
+	\textit{\textbf{Pledge:} I pledge my honor that I have abided by the Stevens Honor System.} - \textbf{\NAME}
+\end{center}
+
+
+\question{1}{(a) Show that $\le_{m}$ is a transitive relation. (b) Show that if A is TM-recognizable and $A \le_{m}$ $\overline{A}$, then A is decidable.}
+	\part{a}
+		Since $A\le_{m}B$, have $B\le_{m}C$. This means there are \textbf{computable} functions f and g that satisfy the following:\par
+		$w \in A \Longleftrightarrow f(w) \in B$ and $y \in B \Longleftrightarrow g(y) \in C$. \par
+		Now we can consider the composition function $h(w) = g(f(w))$. \par
+		Following this, we then construct a TM that computes $h$:\par
+		Simulate a TM for $f$ on input $w$ and call the output $y$. \par
+		Now simulate another TM for $g$ on $y$.\par
+		The output for this is $h(w) = g(f(w))$. Therefore, h is also a computable function. Also, since $w\in A \Longleftrightarrow h(w) \in C$, this means that $A\le_{m}C$ from the reduction of $h$.\par
+		
+	\part{b}
+		If $A \le_{m} \overline{A}$, then we can say that $\overline{A} \le_{m} A$ from the same mapping reduction.\par
+		Since we know that A is TM-recognizable, this means that $\overline{A}$ is also TM-recognizable, and from this, it means that A is decidable.\par
+
+
+\question{2}{Is $DISJOINT_{TM}$ decidable or undecidable? Prove your answer.} 
+	Assume $DISJOINT_{TM}$ is decidable. Because of this there is a decider D. Then we say that L(B) is all possible inputs.\par
+	Now use D to create another decider J that can decide on the language $E_{TM}$ such that \{$<$M$>$: L(M) = $\phi$\}.\par
+	From this, we know that $E_{TM}$ is not a decidable language, therefore, its decider J does the following:\par
+	For the decider J, J($<$A$>$) =\par
+	\quad If D($<$A$>$, $<$B$>$) accepts, then ACCEPT. Otherwise, REJECT.\par
+	given that L(B) = $\Sigma$*.\par
+	So $<$A$>$ $\in$ $E_{TM}$ IFF ($<$A$>$, $<$B$>$) $\in$ $DISJOINT_{TM}$. If L(A) $\neq \phi$, then ($<$A$>$, $<$B$>$) $\notin$ $DISJOINT_{TM}$. Therefore, $E_{TM} \le DISJOINT_{TM}$. Since $E_{TM}$ is undecidable, $DISJOINT_{TM}$ must be as well.\par
+	
+\question{3}{A triangle is an undirected graph is a cycle of length 3. Show that the language $TRIANGLE=\{<G>: graph\;G\;contains\;a\;triangle\}$ is in P.}
+	Let G = (V, E) where its set of vertices are V and its set of edges are E. We can enumerate all triples (u, v, w) with vertices $u, v, w \in V$ and $u<v<w$. Then check if the all possible pair of the three edges (u, v), (v, w), and (u, w) are in the enumerator E.\par
+	Enumerating all of these triples has time of $\bigO (|V|^{3})$. Then checking to see if the pairs belong to E take time of $\bigO(|E|)$. Overall time is now $\bigO(|V|^{3}|E|)$, which is polynomial in the length of the input of $<$G$>$. From this it is now proven that $TRIANGLE$ is in P.\par
+	
+\question{4}{}
+	\part{i}
+		First ask whether or not the formula is satisfiable. To which they will reply yes because we have not made any guesses for the boolean variables yet.\par
+		Then give a guess for x$_{1}$.\par
+		If they say that the formula is still satisfiable, then the guess that was just made is correct. If it is not satisfiable, then you change it to the inverse boolean value.\par
+		Repeat for the rest of x$_{2}$ ... x$_{n}$.\par
+		
+	\part{ii}
+		Maximum number of queries made for the above algorithm is $n+1$.\par
+		
+	\part{iii}
+%		The $+1$ originates from the initial query asking the genie to see if the formula is satisfiable, then the n amount of queries originates from the guesses and checking to see if it is still satisfiable.\par
+		As one goes along after the first query, you continually guess the current boolean value and see whether or not the formula is still satisfiable. If it is true, then you can move on, otherwise, since you are only working with boolean values, swapping the value to its inverse is easy thus preventing the asker to start over from the very beginning. In the end after guessing and checking if still satisfiable, you will have satisfying assignments for a satisfiable formula.\par
+	
+
+\end{document}
